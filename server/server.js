@@ -12,7 +12,27 @@ const app = express();
 
 connectDB();
 
-app.use(cors());
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://live-code-editor-8u64.onrender.com',
+  // Add your Vercel URL below:
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+    // Allow any vercel.app subdomain
+    if (/\.vercel\.app$/.test(origin)) return callback(null, true);
+    return callback(new Error('CORS not allowed: ' + origin));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(express.json());
 
 const authRoutes  = require("./routes/authRoutes");
@@ -25,7 +45,18 @@ app.use("/api/code", codeRoutes);
 app.get("/", (req, res) => res.send("Live Code Platform API Running"));
 
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, {
+  cors: {
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+      if (origin.endsWith(".vercel.app")) return callback(null, true);
+      return callback(new Error("Socket CORS blocked: " + origin));
+    },
+    credentials: true,
+    methods: ["GET", "POST"],
+  },
+});
 
 const INACTIVE_TIMEOUT = 60 * 60 * 1000; // 1 hour in ms
 const MAX_CHAT_HISTORY = 200;             // max messages stored per room
