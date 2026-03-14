@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import socket from "../socket";
 import CodeEditor from "../components/Editor";
+import API_BASE from "../config";
 import Chat from "../components/Chat";
 
 const LANGUAGES = [
@@ -296,7 +297,7 @@ export default function Room() {
     setOutput("");
     setOutputType("idle");
     try {
-      const res = await fetch("https://live-code-editor-8u64.onrender.com/api/code/run", {
+      const res = await fetch(`${API_BASE}/api/code/run`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code, language }),

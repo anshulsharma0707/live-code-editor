@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API_BASE from "../config";
 
 const modalStyle = `
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap');
@@ -151,7 +152,7 @@ const modalStyle = `
   }
 `;
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = `${API_BASE}/api/auth`;
 
 const AuthModal = ({ closeModal, setUser }) => {
   const [name, setName] = useState("");

@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import API_BASE from "../config";
 import { useNavigate } from "react-router-dom";
 
 const styles = `
@@ -306,7 +307,7 @@ const styles = `
   .jr-recent-item:hover .jr-recent-arrow { color: var(--cyan); }
 `;
 
-const API = "http://localhost:5000/api/room";
+const API = `${API_BASE}/api/room`;
 
 // Extract room ID from either a raw code or a full URL
 function parseRoomId(input) {

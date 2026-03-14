@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import API_BASE from "../config";
 import { useNavigate } from "react-router-dom";
 
 const modalStyle = `
@@ -144,7 +145,7 @@ const modalStyle = `
   .guard-back:hover { color: #e6edf3; border-color: #2a3a4a; }
 `;
 
-const API = "http://localhost:5000/api/auth";
+const API = `${API_BASE}/api/auth`;
 
 export default function AuthGuard({ children, actionLabel = "continue" }) {
   const navigate = useNavigate();

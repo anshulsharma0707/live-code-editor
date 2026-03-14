@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API_BASE from "../config";
 import { useNavigate } from "react-router-dom";
 
 const styles = `
@@ -282,7 +283,7 @@ const styles = `
   .cr-share-btn:hover { border-color: var(--green); color: var(--green); }
 `;
 
-const API = "http://localhost:5000/api/room";
+const API = `${API_BASE}/api/room`;
 
 export default function CreateRoom() {
   const navigate = useNavigate();
