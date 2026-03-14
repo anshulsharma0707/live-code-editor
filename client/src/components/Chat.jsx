@@ -156,26 +156,63 @@ function formatTime(date) {
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
-const Chat = ({ socket, roomId, username }) => {
+const Chat = ({ socket, roomId, username, onRoomExpired }) => {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([
-    { type: "system", text: `You joined the room`, time: new Date() },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [unread, setUnread] = useState(0);
   const [focused, setFocused] = useState(false);
   const bottomRef = useRef(null);
   const textareaRef = useRef(null);
 
+  // Load chat history on mount + listen for new messages
   useEffect(() => {
+    // Server sends full chat history when user joins
+    socket.on("chat-history", (history) => {
+      const parsed = history.map((m) => ({
+        type: m.username === username ? "own" : "other",
+        username: m.username,
+        text: m.message,
+        time: new Date(m.time),
+      }));
+      setMessages([
+        { type: "system", text: "You joined the room", time: new Date() },
+        ...parsed,
+      ]);
+    });
+
     socket.on("receive-message", (data) => {
+      // Skip if it's our own message (already added locally)
+      if (data.username === username) return;
       setMessages((prev) => [
         ...prev,
-        { type: "other", username: data.username, text: data.message, time: new Date() },
+        { type: "other", username: data.username, text: data.message, time: new Date(data.time) },
       ]);
       if (!focused) setUnread((u) => u + 1);
     });
-    return () => socket.off("receive-message");
-  }, [focused]);
+
+    socket.on("user-left", ({ username: leftUser }) => {
+      setMessages((prev) => [
+        ...prev,
+        { type: "system", text: `${leftUser} left the room`, time: new Date() },
+      ]);
+    });
+
+    // Room expired after 1hr inactivity
+    socket.on("room-expired", ({ message: msg }) => {
+      setMessages((prev) => [
+        ...prev,
+        { type: "system", text: "⏱ Room closed due to 1hr inactivity", time: new Date() },
+      ]);
+      if (onRoomExpired) setTimeout(onRoomExpired, 3000);
+    });
+
+    return () => {
+      socket.off("chat-history");
+      socket.off("receive-message");
+      socket.off("user-left");
+      socket.off("room-expired");
+    };
+  }, [focused, username]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -184,6 +221,7 @@ const Chat = ({ socket, roomId, username }) => {
   const sendMessage = () => {
     if (!message.trim()) return;
     socket.emit("send-message", roomId, message.trim(), username);
+    // Add own message immediately (don't wait for server echo)
     setMessages((prev) => [
       ...prev,
       { type: "own", username, text: message.trim(), time: new Date() },

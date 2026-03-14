@@ -44,10 +44,19 @@ const styles = `
 
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
   @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+  @keyframes fadeOut { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(-6px)} }
   @keyframes spin   { to{transform:rotate(360deg)} }
   @keyframes pulse  {
     0%,100%{box-shadow:0 0 0 0 rgba(0,255,135,0.4)}
     50%    {box-shadow:0 0 0 8px rgba(0,255,135,0)}
+  }
+  @keyframes slideIn {
+    from { opacity:0; transform: translateX(-10px); }
+    to   { opacity:1; transform: translateX(0); }
+  }
+  @keyframes slideOut {
+    from { opacity:1; transform: translateX(0); }
+    to   { opacity:0; transform: translateX(-10px); }
   }
 
   .room-wrap {
@@ -57,7 +66,7 @@ const styles = `
     font-family: var(--display);
   }
 
-  /* ── TOP BAR ── */
+  /* TOP BAR */
   .room-topbar {
     height: 48px; flex-shrink: 0;
     display: flex; align-items: center;
@@ -65,10 +74,8 @@ const styles = `
     padding: 0 16px;
     background: var(--topbar);
     border-bottom: 1px solid var(--border);
-    gap: 12px;
-    z-index: 10;
+    gap: 12px; z-index: 10;
   }
-
   .room-logo {
     font-family: var(--mono); font-size: 13px; font-weight: 700;
     color: var(--green); display: flex; align-items: center; gap: 6px;
@@ -78,35 +85,26 @@ const styles = `
     width: 6px; height: 6px; border-radius: 50%;
     background: var(--green); animation: blink 1.5s infinite;
   }
-
   .room-topbar-mid {
-    display: flex; align-items: center; gap: 10px; flex: 1;
-    justify-content: center;
+    display: flex; align-items: center; gap: 10px; flex: 1; justify-content: center;
   }
-
   .room-lang-select {
     background: var(--sidebar); border: 1px solid var(--border);
     color: var(--text); border-radius: 6px;
     padding: 5px 10px; font-family: var(--mono); font-size: 12px;
-    outline: none; cursor: pointer;
-    transition: border-color 0.2s;
+    outline: none; cursor: pointer; transition: border-color 0.2s;
   }
   .room-lang-select:focus { border-color: rgba(0,255,135,0.4); }
-
   .room-filename {
     font-family: var(--mono); font-size: 12px; color: var(--muted);
-    padding: 4px 10px;
-    background: var(--sidebar); border: 1px solid var(--border);
-    border-radius: 6px;
+    padding: 4px 10px; background: var(--sidebar);
+    border: 1px solid var(--border); border-radius: 6px;
   }
-
   .room-run-btn {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px 16px;
+    display: flex; align-items: center; gap: 6px; padding: 6px 16px;
     background: var(--green); border: none; border-radius: 6px;
     font-family: var(--display); font-size: 13px; font-weight: 700;
-    color: #000; cursor: pointer; transition: all 0.2s;
-    white-space: nowrap;
+    color: #000; cursor: pointer; transition: all 0.2s; white-space: nowrap;
     animation: pulse 2.5s infinite;
   }
   .room-run-btn:hover:not(:disabled) {
@@ -119,20 +117,15 @@ const styles = `
     border: 2px solid rgba(0,0,0,0.3); border-top-color: #000;
     border-radius: 50%; animation: spin 0.6s linear infinite;
   }
-
-  .room-topbar-right {
-    display: flex; align-items: center; gap: 10px;
-  }
+  .room-topbar-right { display: flex; align-items: center; gap: 10px; }
   .room-id-badge {
     font-family: var(--mono); font-size: 11px; color: var(--muted);
     padding: 4px 10px; border: 1px solid var(--border);
     border-radius: 6px; cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; gap: 6px;
-    white-space: nowrap;
+    display: flex; align-items: center; gap: 6px; white-space: nowrap;
   }
   .room-id-badge:hover { border-color: rgba(0,255,135,0.3); color: var(--green); }
   .room-id-badge.copied { color: var(--green); border-color: rgba(0,255,135,0.3); }
-
   .room-leave-btn {
     padding: 5px 12px; background: transparent;
     border: 1px solid rgba(255,123,114,0.2); border-radius: 6px;
@@ -141,23 +134,18 @@ const styles = `
   }
   .room-leave-btn:hover { background: rgba(255,123,114,0.08); border-color: var(--red); }
 
-  /* ── MAIN BODY ── */
-  .room-body {
-    display: flex; flex: 1; overflow: hidden;
-  }
+  /* MAIN BODY */
+  .room-body { display: flex; flex: 1; overflow: hidden; }
 
-  /* ── LEFT SIDEBAR: Participants ── */
+  /* LEFT SIDEBAR */
   .room-sidebar {
     width: 220px; flex-shrink: 0;
     background: var(--sidebar);
     border-right: 1px solid var(--border);
-    display: flex; flex-direction: column;
-    overflow: hidden;
+    display: flex; flex-direction: column; overflow: hidden;
   }
-
   .room-sidebar-header {
-    padding: 14px 16px 10px;
-    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 10px; border-bottom: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between;
   }
   .room-sidebar-title {
@@ -169,18 +157,18 @@ const styles = `
     background: rgba(0,255,135,0.08); border: 1px solid rgba(0,255,135,0.15);
     border-radius: 10px; padding: 1px 7px;
   }
-
-  .room-participants-list {
-    flex: 1; overflow-y: auto; padding: 10px 10px;
-  }
+  .room-participants-list { flex: 1; overflow-y: auto; padding: 10px; }
   .room-participants-list::-webkit-scrollbar { width: 3px; }
-  .room-participants-list::-webkit-scrollbar-track { background: transparent; }
   .room-participants-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
   .room-participant {
     display: flex; align-items: center; gap: 10px;
     padding: 8px 10px; border-radius: 8px; margin-bottom: 4px;
-    transition: background 0.2s; animation: fadeIn 0.3s ease both;
+    transition: background 0.2s;
+    animation: slideIn 0.3s ease both;
+  }
+  .room-participant.leaving {
+    animation: slideOut 0.3s ease forwards;
   }
   .room-participant:hover { background: rgba(255,255,255,0.03); }
 
@@ -195,68 +183,46 @@ const styles = `
     font-size: 13px; font-weight: 600; color: var(--text);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .room-p-you {
-    font-family: var(--mono); font-size: 9px; color: var(--muted);
-  }
+  .room-p-you { font-family: var(--mono); font-size: 9px; color: var(--muted); }
   .room-p-dot {
     width: 6px; height: 6px; border-radius: 50%;
-    background: var(--green); flex-shrink: 0;
-    animation: blink 2.5s infinite;
+    background: var(--green); flex-shrink: 0; animation: blink 2.5s infinite;
   }
 
   .room-sidebar-footer {
-    padding: 12px 16px;
-    border-top: 1px solid var(--border);
+    padding: 12px 16px; border-top: 1px solid var(--border);
     font-family: var(--mono); font-size: 10px; color: var(--muted);
     display: flex; align-items: center; gap: 6px;
   }
 
-  /* ── CENTER: Editor + Output ── */
-  .room-center {
-    flex: 1; display: flex; flex-direction: column; overflow: hidden;
-    min-width: 0;
-  }
+  /* CENTER */
+  .room-center { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+  .room-editor-wrap { flex: 1; overflow: hidden; position: relative; }
 
-  .room-editor-wrap {
-    flex: 1; overflow: hidden; position: relative;
-  }
-
-  /* Output panel */
+  /* OUTPUT */
   .room-output {
-    height: 160px; flex-shrink: 0;
-    background: #080c10;
+    height: 160px; flex-shrink: 0; background: #080c10;
     border-top: 1px solid var(--border);
-    display: flex; flex-direction: column;
-    overflow: hidden;
+    display: flex; flex-direction: column; overflow: hidden;
   }
   .room-output-header {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 16px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
+    display: flex; align-items: center; gap: 10px; padding: 8px 16px;
+    border-bottom: 1px solid var(--border); flex-shrink: 0;
   }
   .room-output-title {
     font-family: var(--mono); font-size: 10px;
     letter-spacing: 2px; text-transform: uppercase; color: var(--muted);
   }
-  .room-output-status {
-    font-family: var(--mono); font-size: 10px;
-    padding: 1px 8px; border-radius: 10px;
-  }
+  .room-output-status { font-family: var(--mono); font-size: 10px; padding: 1px 8px; border-radius: 10px; }
   .room-output-status.ok  { color: var(--green); background: rgba(0,255,135,0.08); }
   .room-output-status.err { color: var(--red);   background: rgba(255,123,114,0.08); }
-  .room-output-status.idle{ color: var(--muted); background: rgba(255,255,255,0.04); }
-
   .room-output-clear {
     margin-left: auto; background: none; border: none;
     font-family: var(--mono); font-size: 11px; color: var(--muted);
     cursor: pointer; transition: color 0.2s;
   }
   .room-output-clear:hover { color: var(--text); }
-
-  .room-output-body {
-    flex: 1; overflow-y: auto; padding: 10px 16px;
-  }
+  .room-output-body { flex: 1; overflow-y: auto; padding: 10px 16px; }
   .room-output-body::-webkit-scrollbar { width: 3px; }
   .room-output-body::-webkit-scrollbar-thumb { background: var(--border); }
   .room-output-pre {
@@ -264,18 +230,23 @@ const styles = `
     color: var(--text); white-space: pre-wrap; word-break: break-all;
   }
   .room-output-pre.has-err { color: var(--red); }
-  .room-output-placeholder {
-    font-family: var(--mono); font-size: 12px; color: var(--muted);
-    font-style: italic;
-  }
+  .room-output-placeholder { font-family: var(--mono); font-size: 12px; color: var(--muted); font-style: italic; }
 
-  /* ── RIGHT: Chat ── */
+  /* RIGHT CHAT */
   .room-chat-panel {
     width: 280px; flex-shrink: 0;
     background: var(--sidebar);
     border-left: 1px solid var(--border);
-    display: flex; flex-direction: column;
-    overflow: hidden;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .room-sidebar { display: none; }
+  }
+  @media (max-width: 650px) {
+    .room-chat-panel { display: none; }
+    .room-filename { display: none; }
   }
 `;
 
@@ -287,27 +258,33 @@ export default function Room() {
   const [participants, setParticipants] = useState([]);
   const [language, setLanguage] = useState("63");
   const [output, setOutput] = useState("");
-  const [outputType, setOutputType] = useState("idle"); // idle | ok | err
+  const [outputType, setOutputType] = useState("idle");
   const [running, setRunning] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  // Always get username from logged-in user — no prompt ever
   const username = (() => {
-    const user = localStorage.getItem("user");
-    if (user) return JSON.parse(user).name;
-    let name = localStorage.getItem("username");
-    if (!name) {
-      name = prompt("Enter your name to join the room:") || "Anonymous";
-      localStorage.setItem("username", name);
-    }
-    return name;
+    try {
+      const user = localStorage.getItem("user");
+      if (user) {
+        const parsed = JSON.parse(user);
+        if (parsed?.name) return parsed.name;
+      }
+    } catch {}
+    return "Anonymous";
   })();
 
   const currentLang = LANGUAGES.find((l) => l.id === language) || LANGUAGES[0];
 
   useEffect(() => {
     socket.emit("join-room", roomId, username);
-    socket.on("participants", (users) => setParticipants(users));
+
+    socket.on("participants", (users) => {
+      setParticipants(users.filter((u) => u && u !== "null" && u !== "undefined"));
+    });
+
     socket.on("code-update", (newCode) => setCode(newCode));
+
     return () => {
       socket.off("participants");
       socket.off("code-update");
@@ -319,7 +296,7 @@ export default function Room() {
     setOutput("");
     setOutputType("idle");
     try {
-      const res = await fetch("http://localhost:5000/api/code/run", {
+      const res = await fetch("https://live-code-editor-8u64.onrender.com/api/code/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code, language }),
@@ -346,57 +323,40 @@ export default function Room() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Emit leave-room before navigating away
+  const leaveRoom = () => {
+    socket.emit("leave-room", roomId);
+    navigate("/");
+  };
+
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: styles }} />
       <div className="room-wrap">
 
-        {/* ── TOP BAR ── */}
+        {/* TOP BAR */}
         <div className="room-topbar">
           <div className="room-logo">
             <span className="room-logo-dot" /> LiveCode
           </div>
-
           <div className="room-topbar-mid">
-            <select
-              className="room-lang-select"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-            >
-              {LANGUAGES.map((l) => (
-                <option key={l.id} value={l.id}>{l.label}</option>
-              ))}
+            <select className="room-lang-select" value={language} onChange={(e) => setLanguage(e.target.value)}>
+              {LANGUAGES.map((l) => <option key={l.id} value={l.id}>{l.label}</option>)}
             </select>
-
-            <span className="room-filename">
-              main.{currentLang.ext}
-            </span>
-
+            <span className="room-filename">main.{currentLang.ext}</span>
             <button className="room-run-btn" onClick={runCode} disabled={running}>
-              {running
-                ? <><span className="room-spinner" /> Running...</>
-                : <>▶ Run Code</>
-              }
+              {running ? <><span className="room-spinner" /> Running...</> : <>▶ Run Code</>}
             </button>
           </div>
-
           <div className="room-topbar-right">
-            <div
-              className={`room-id-badge ${copied ? "copied" : ""}`}
-              onClick={copyRoomId}
-              title="Click to copy room code"
-            >
-              <span>#</span>
-              <span>{roomId}</span>
-              <span>{copied ? "✓" : "⎘"}</span>
+            <div className={`room-id-badge ${copied ? "copied" : ""}`} onClick={copyRoomId} title="Click to copy room code">
+              <span>#</span><span>{roomId}</span><span>{copied ? "✓" : "⎘"}</span>
             </div>
-            <button className="room-leave-btn" onClick={() => navigate("/")}>
-              Leave
-            </button>
+            <button className="room-leave-btn" onClick={leaveRoom}>Leave</button>
           </div>
         </div>
 
-        {/* ── MAIN BODY ── */}
+        {/* MAIN BODY */}
         <div className="room-body">
 
           {/* LEFT — Participants */}
@@ -405,27 +365,20 @@ export default function Room() {
               <span className="room-sidebar-title">Participants</span>
               <span className="room-online-count">{participants.length} online</span>
             </div>
-
             <div className="room-participants-list">
               {participants.map((user, i) => (
                 <div key={i} className="room-participant">
-                  <div
-                    className="room-p-avatar"
-                    style={{ background: getColor(user) }}
-                  >
+                  <div className="room-p-avatar" style={{ background: getColor(user) }}>
                     {getInitials(user)}
                   </div>
                   <div className="room-p-info">
                     <div className="room-p-name">{user}</div>
-                    {user === username && (
-                      <div className="room-p-you">you</div>
-                    )}
+                    {user === username && <div className="room-p-you">you</div>}
                   </div>
                   <span className="room-p-dot" />
                 </div>
               ))}
             </div>
-
             <div className="room-sidebar-footer">
               <span className="room-logo-dot" style={{ width: 5, height: 5 }} />
               Room · {roomId}
@@ -436,15 +389,12 @@ export default function Room() {
           <div className="room-center">
             <div className="room-editor-wrap">
               <CodeEditor
-                code={code}
-                setCode={setCode}
-                socket={socket}
-                roomId={roomId}
+                code={code} setCode={setCode}
+                socket={socket} roomId={roomId}
                 language={currentLang.label.toLowerCase()}
+                username={username}
               />
             </div>
-
-            {/* OUTPUT */}
             <div className="room-output">
               <div className="room-output-header">
                 <span className="room-output-title">Output</span>
@@ -454,9 +404,7 @@ export default function Room() {
                   </span>
                 )}
                 {output && (
-                  <button className="room-output-clear" onClick={() => { setOutput(""); setOutputType("idle"); }}>
-                    Clear
-                  </button>
+                  <button className="room-output-clear" onClick={() => { setOutput(""); setOutputType("idle"); }}>Clear</button>
                 )}
               </div>
               <div className="room-output-body">
@@ -470,7 +418,7 @@ export default function Room() {
 
           {/* RIGHT — Chat */}
           <div className="room-chat-panel">
-            <Chat socket={socket} roomId={roomId} username={username} />
+            <Chat socket={socket} roomId={roomId} username={username} onRoomExpired={leaveRoom} />
           </div>
 
         </div>
